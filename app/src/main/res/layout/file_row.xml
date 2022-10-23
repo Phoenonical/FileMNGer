@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_marginBottom="8dp"
+    android:padding="10dp"
+    android:background="@color/Row_background">
+
+    <TextView
+        android:id="@+id/FileType"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="15"
+        android:background="@color/DIR"
+        android:text="DIR"
+        android:textAlignment="center"
+        android:gravity="center"/>
+
+    <LinearLayout
+        android:id="@+id/layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="85"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/FileName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Directory1"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/FileInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Size: 50MB"
+            android:textColor="@color/gray"
+            android:textStyle="bold" />
+
+
+    </LinearLayout>
+
+</LinearLayout>
