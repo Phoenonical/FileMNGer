@@ -14,6 +14,10 @@ open class TypeFile(myF: File) {
         return myFile.extension
     }
 
+    fun isFolder(): Boolean{
+        return myFile.isDirectory
+    }
+
     /*fun getfileBG(): Int{
         when(getfileExtension())
             ".pdf" ->

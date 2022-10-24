@@ -1,5 +1,6 @@
 package com.example.filemnger.ui.main
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -8,6 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
@@ -44,19 +46,20 @@ class MainFragment : Fragment() {
         val root: View = inflater.inflate(R.layout.fragment_main, container, false)
         val recyclerView: RecyclerView =
             root.findViewById<RecyclerView>(R.id.recyclerView_File)
+        val PathView: TextView = root.findViewById(R.id.FilePath)
         recyclerView.layoutManager = LinearLayoutManager(context)
         val list: ArrayList<TypeFile> = ArrayList()
-
+        val path = Environment.getExternalStorageDirectory().path
         viewModel.getList().observe(viewLifecycleOwner,
             Observer<List<Any?>?> { s ->
-                adapterList = FileAdapter(context, s as List<TypeFile>, viewModel)
+                adapterList = context?.let { FileAdapter(it, s as List<TypeFile>, viewModel) }!!
                 recyclerView.adapter = adapterList
+                PathView.text = path
             })
 
 
         if (checkPermission()) {
             //permission allowed
-            val path = Environment.getExternalStorageDirectory().path
             val filesAndFolders: Array<File>? = File(path).listFiles()
             Log.d("FILETAG", path) // /storage/emulated/0
             Log.d("FILETAG", filesAndFolders.toString()) // null
@@ -98,40 +101,6 @@ class MainFragment : Fragment() {
                 arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
                 138
             )
-        }
-    }
-
-    private val READ_EXTERNAL_STORAGE = 112
-
-
-    protected fun readSDcardDownloadedFiles() {
-        if (context?.let { ContextCompat.checkSelfPermission(it, android.Manifest.permission.READ_EXTERNAL_STORAGE) }
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                context as Activity,
-                arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
-                READ_EXTERNAL_STORAGE
-            )
-        } else {
-            //Permission is granted
-            //Call the method to read file.
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String?>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (grantResults.size > 0
-            && grantResults[0] == PackageManager.PERMISSION_GRANTED
-        ) {
-            //Read the files
-        } else {
-            // permission denied, boo! Disable the
-            // functionality that depends on this permission.
         }
     }
 

@@ -6,12 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.filemnger.filetypes.TypeFile
 import com.example.filemnger.R
 
 class FileAdapter(
-    context: Context?,
+    context: Context,
     Data: List<TypeFile>,
     model: MainViewModel
 ): RecyclerView.Adapter<FileAdapter.ViewHolder>()  {
@@ -19,7 +20,7 @@ class FileAdapter(
     private var mData: List<TypeFile> = Data
     private var mInflater: LayoutInflater
     private var model: MainViewModel = model
-    private var context: Context? = null
+    private var context: Context = context
 
     init{
         mInflater = LayoutInflater.from(context)
@@ -35,7 +36,16 @@ class FileAdapter(
 
         val dato: TypeFile = mData[position]
         val pos = position
-        holder.fName.text = "(" + dato.getfileName() + ")"
+        holder.fName.text = dato.getfileName()
+        if (dato.isFolder()) {
+            holder.fType.text = "DIR"
+            holder.fType.setBackgroundColor(ContextCompat.getColor(context, R.color.DIR))
+        }
+        else {
+            holder.fType.text = "ETC"
+            holder.fType.setBackgroundColor(ContextCompat.getColor(context, R.color.purple_200))
+        }
+
 
         //TODO("Implement later")
     }
