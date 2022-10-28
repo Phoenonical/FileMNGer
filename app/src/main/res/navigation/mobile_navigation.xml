@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_files">
+
+    <fragment
+        android:id="@+id/nav_files"
+        android:name="com.example.filemnger.ui.main.MainFragment"
+        android:label="Files"
+        tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_nav_files_to_detailFragment"
+            app:destination="@id/detailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.example.filemnger.ui.detail.DetailTextFragment"
+        android:label="fragment_detail"
+        tools:layout="@layout/fragment_text_detail" >
+        <action
+            android:id="@+id/action_detailFragment_to_nav_files"
+            app:destination="@id/nav_files" />
+    </fragment>
+
+</navigation>

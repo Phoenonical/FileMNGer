@@ -2,6 +2,7 @@ package com.example.filemnger.ui.main
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Environment
@@ -9,6 +10,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
@@ -17,11 +19,11 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.filemnger.R
 import com.example.filemnger.filetypes.TypeFile
-import com.example.filemnger.filetypes.GeneralFiles
 import java.io.File
 
 
@@ -41,45 +43,51 @@ class MainFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        viewModel = activity?.let { ViewModelProvider(it).get(MainViewModel::class.java) }!!
 
         val root: View = inflater.inflate(R.layout.fragment_main, container, false)
         val recyclerView: RecyclerView =
             root.findViewById<RecyclerView>(R.id.recyclerView_File)
-        val PathView: TextView = root.findViewById(R.id.FilePath)
         recyclerView.layoutManager = LinearLayoutManager(context)
         val list: ArrayList<TypeFile> = ArrayList()
+
+        viewModel.getPath().observe(viewLifecycleOwner,
+            Observer<Any> { s ->
+                var l: ArrayList<TypeFile> = ArrayList()
+                updateList(s as String,l)
+                viewModel.setList(l)
+            })
+
         val path = Environment.getExternalStorageDirectory().path
+        viewModel.setPath(path)
+
         viewModel.getList().observe(viewLifecycleOwner,
             Observer<List<Any?>?> { s ->
-                adapterList = context?.let { FileAdapter(it, s as List<TypeFile>, viewModel) }!!
+                adapterList = context?.let { FileAdapter(this,it, s as List<TypeFile>, viewModel) }!!
                 recyclerView.adapter = adapterList
-                PathView.text = path
             })
 
 
+
+       updateList(viewModel.getPath().value!!,list)
+
+        return root
+    }
+
+    private fun updateList(path: String, list: ArrayList<TypeFile>){
         if (checkPermission()) {
             //permission allowed
             val filesAndFolders: Array<File>? = File(path).listFiles()
-            Log.d("FILETAG", path) // /storage/emulated/0
-            Log.d("FILETAG", filesAndFolders.toString()) // null
             if (filesAndFolders != null) {
                 for (file in filesAndFolders) {
-                    Log.d("FILETAG", file.name)
-                    list.add(GeneralFiles(file))
-                    Log.d("FILETAG", list.size.toString()) // null
+                    list.add(TypeFile(requireContext(),file))
                 }
             }// null
             viewModel.setList(list)
-            Log.d("FILETAG", File(path).exists().toString()) // true
-            Log.d("FILETAG", File(path).canRead().toString()) // false
-
         } else {
             //permission not allowed
             requestPermission()
         }
-
-        return root
     }
 
     private fun checkPermission(): Boolean {
